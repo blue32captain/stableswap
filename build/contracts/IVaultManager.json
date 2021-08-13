@@ -1,0 +1,331 @@
+{
+  "contractName": "IVaultManager",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "rebalance",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "shouldRebalance",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.7.6+commit.7338295f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"rebalance\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"shouldRebalance\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/interfaces/IVaultManager.sol\":\"IVaultManager\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/interfaces/IVaultManager.sol\":{\"keccak256\":\"0xd0bcad6a88820254d0ea1c65c83efdcc01c967817afeadb96a518fd905a8ef6f\",\"license\":\"BUSL-1.1\",\"urls\":[\"bzz-raw://72db6e7d37edfff73320b1e1a216f4e06a55b2bd0e52c7e4b6d50cb4e5096031\",\"dweb:/ipfs/QmQ6eH6zjNfU4eDvwcLMAGab3wH5WyT2yo9B7CfLMndzKC\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "// SPDX-License-Identifier: BUSL-1.1\r\n\r\npragma solidity 0.7.6;\r\n\r\ninterface IVaultManager {\r\n    function rebalance() external;\r\n\r\n    function shouldRebalance() external view returns (bool);\r\n}\r\n",
+  "sourcePath": "C:\\Users\\admin\\Documents\\smart_contract_tasks\\uniswap-v3-deltafi\\contracts\\interfaces\\IVaultManager.sol",
+  "ast": {
+    "absolutePath": "project:/contracts/interfaces/IVaultManager.sol",
+    "exportedSymbols": {
+      "IVaultManager": [
+        3537
+      ]
+    },
+    "id": 3538,
+    "license": "BUSL-1.1",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 3528,
+        "literals": [
+          "solidity",
+          "0.7",
+          ".6"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "40:22:28"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "id": 3537,
+        "linearizedBaseContracts": [
+          3537
+        ],
+        "name": "IVaultManager",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "functionSelector": "7d7c2a1c",
+            "id": 3531,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "rebalance",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 3529,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "115:2:28"
+            },
+            "returnParameters": {
+              "id": 3530,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "126:0:28"
+            },
+            "scope": 3537,
+            "src": "97:30:28",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "ae2c1d5f",
+            "id": 3536,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "shouldRebalance",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 3532,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "159:2:28"
+            },
+            "returnParameters": {
+              "id": 3535,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3534,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3536,
+                  "src": "185:4:28",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 3533,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "185:4:28",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "184:6:28"
+            },
+            "scope": 3537,
+            "src": "135:56:28",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 3538,
+        "src": "66:128:28"
+      }
+    ],
+    "src": "40:156:28"
+  },
+  "legacyAST": {
+    "attributes": {
+      "absolutePath": "project:/contracts/interfaces/IVaultManager.sol",
+      "exportedSymbols": {
+        "IVaultManager": [
+          3537
+        ]
+      },
+      "license": "BUSL-1.1"
+    },
+    "children": [
+      {
+        "attributes": {
+          "literals": [
+            "solidity",
+            "0.7",
+            ".6"
+          ]
+        },
+        "id": 3528,
+        "name": "PragmaDirective",
+        "src": "40:22:28"
+      },
+      {
+        "attributes": {
+          "abstract": false,
+          "baseContracts": [
+            null
+          ],
+          "contractDependencies": [
+            null
+          ],
+          "contractKind": "interface",
+          "fullyImplemented": false,
+          "linearizedBaseContracts": [
+            3537
+          ],
+          "name": "IVaultManager",
+          "scope": 3538
+        },
+        "children": [
+          {
+            "attributes": {
+              "functionSelector": "7d7c2a1c",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "rebalance",
+              "scope": 3537,
+              "stateMutability": "nonpayable",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 3529,
+                "name": "ParameterList",
+                "src": "115:2:28"
+              },
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 3530,
+                "name": "ParameterList",
+                "src": "126:0:28"
+              }
+            ],
+            "id": 3531,
+            "name": "FunctionDefinition",
+            "src": "97:30:28"
+          },
+          {
+            "attributes": {
+              "functionSelector": "ae2c1d5f",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "shouldRebalance",
+              "scope": 3537,
+              "stateMutability": "view",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 3532,
+                "name": "ParameterList",
+                "src": "159:2:28"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "scope": 3536,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "bool",
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "bool",
+                          "type": "bool"
+                        },
+                        "id": 3533,
+                        "name": "ElementaryTypeName",
+                        "src": "185:4:28"
+                      }
+                    ],
+                    "id": 3534,
+                    "name": "VariableDeclaration",
+                    "src": "185:4:28"
+                  }
+                ],
+                "id": 3535,
+                "name": "ParameterList",
+                "src": "184:6:28"
+              }
+            ],
+            "id": 3536,
+            "name": "FunctionDefinition",
+            "src": "135:56:28"
+          }
+        ],
+        "id": 3537,
+        "name": "ContractDefinition",
+        "src": "66:128:28"
+      }
+    ],
+    "id": 3538,
+    "name": "SourceUnit",
+    "src": "40:156:28"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.7.6+commit.7338295f.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.4.2",
+  "updatedAt": "2021-08-13T18:37:00.995Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}

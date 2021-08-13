@@ -1,0 +1,27 @@
+{
+  "name": "delta-fi",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "truffle compile",
+    "test": "truffle test",
+    "start": "truffle migrate",
+    "deploy:mainnet": "truffle migrate --network mainnet",
+    "deploy:testnet": "truffle migrate --network testnet",
+    "deploy:dev": "truffle migrate --network development",
+    "reset:testnet": "truffle migrate --network testnet --reset"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^3.4.1-solc-0.7-2",
+    "@openzeppelin/test-helpers": "^0.5.10",
+    "@uniswap/v3-core": "*",
+    "@uniswap/v3-periphery": "*",
+    "@truffle/hdwallet-provider": "^1.0.43",
+    "truffle": "^5.3.7",
+    "truffle-flattener": "^1.5.0"
+  },
+  "devDependencies": {
+    "truffle-plugin-verify": "^0.5.11"
+  }
+}
