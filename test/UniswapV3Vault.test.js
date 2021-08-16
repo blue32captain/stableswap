@@ -14,8 +14,6 @@ contract("UniswapV3Vault", (accounts) => {
 
     before(async () => {
 
-        const messageVaule = new BN("1025000000000000000");
-
         await MockToken.new(
             { from: accounts[1] }
         ).then((instance) => {
