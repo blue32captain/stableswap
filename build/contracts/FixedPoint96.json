@@ -291,7 +291,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.2",
-  "updatedAt": "2021-08-13T18:37:00.862Z",
+  "updatedAt": "2021-08-16T08:21:55.898Z",
   "devdoc": {
     "details": "Used in SqrtPriceMath.sol",
     "kind": "dev",

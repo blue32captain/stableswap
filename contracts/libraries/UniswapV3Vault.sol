@@ -90,12 +90,11 @@ contract UniswapV3Vault is
         token0 = IERC20(IUniswapV3Pool(_pool).token0());
         token1 = IERC20(IUniswapV3Pool(_pool).token1());
         tickSpacing = IUniswapV3Pool(_pool).tickSpacing();
-
         protocolFee = _protocolFee;
         maxTotalSupply = _maxTotalSupply;
         governance = _governance;
 
-        require(_protocolFee < 1e6, "protocolFee");
+        require(_protocolFee < 1e6, "fee");
     }
 
     /**
@@ -129,8 +128,8 @@ contract UniswapV3Vault is
             uint256 amount1
         )
     {
-        require(amount0Desired > 0 || amount1Desired > 0, "amount0Desired or amount1Desired");
-        require(to != address(0) && to != address(this), "to");
+        require(amount0Desired > 0 || amount1Desired > 0);
+        require(to != address(0) && to != address(this));
 
         // Poke positions so vault's current holdings are up-to-date
         _poke(baseLower, baseUpper);
@@ -138,9 +137,9 @@ contract UniswapV3Vault is
 
         // Calculate amounts proportional to vault's holdings
         (shares, amount0, amount1) = _calcSharesAndAmounts(amount0Desired, amount1Desired);
-        require(shares > 0, "shares");
-        require(amount0 >= amount0Min, "amount0Min");
-        require(amount1 >= amount1Min, "amount1Min");
+        require(shares > 0);
+        require(amount0 >= amount0Min);
+        require(amount1 >= amount1Min);
 
         // Pull in tokens from sender
         if (amount0 > 0) token0.safeTransferFrom(msg.sender, address(this), amount0);
@@ -149,7 +148,7 @@ contract UniswapV3Vault is
         // Mint shares to recipient
         _mint(to, shares);
         emit Deposit(msg.sender, to, shares, amount0, amount1);
-        require(totalSupply() <= maxTotalSupply, "maxTotalSupply");
+        require(totalSupply() <= maxTotalSupply);
     }
 
     /// @dev Do zero-burns to poke a position on Uniswap so earned fees are
@@ -193,7 +192,7 @@ contract UniswapV3Vault is
             shares = amount0.mul(totalSupply).div(total0);
         } else {
             uint256 cross = Math.min(amount0Desired.mul(total1), amount1Desired.mul(total0));
-            require(cross > 0, "cross");
+            require(cross > 0);
 
             // Round up amounts
             amount0 = cross.sub(1).div(total1).add(1);
@@ -221,7 +220,7 @@ contract UniswapV3Vault is
         nonReentrant 
         override
         returns (uint256 amount0, uint256 amount1) {
-        require(shares > 0, "shares");
+        require(shares > 0);
         require(to != address(0) && to != address(this), "to");
         uint256 totalSupply = totalSupply();
 
@@ -241,8 +240,8 @@ contract UniswapV3Vault is
         // Sum up total amounts owed to recipient
         amount0 = unusedAmount0.add(baseAmount0).add(limitAmount0);
         amount1 = unusedAmount1.add(baseAmount1).add(limitAmount1);
-        require(amount0 >= amount0Min, "amount0Min");
-        require(amount1 >= amount1Min, "amount1Min");
+        require(amount0 >= amount0Min, "0min");
+        require(amount1 >= amount1Min, "1min");
 
         // Push tokens to recipient
         if (amount0 > 0) token0.safeTransfer(to, amount0);
@@ -297,8 +296,8 @@ contract UniswapV3Vault is
         _checkRange(_askLower, _askUpper);
 
         (, int24 tick, , , , , ) = pool.slot0();
-        require(_bidUpper <= tick, "bidUpper");
-        require(_askLower > tick, "askLower"); // inequality is strict as tick is rounded down
+        require(_bidUpper <= tick, "bidUp");
+        require(_askLower > tick, "askLow"); // inequality is strict as tick is rounded down
 
         // Withdraw all current liquidity from Uniswap pool
         {
@@ -347,11 +346,11 @@ contract UniswapV3Vault is
 
     function _checkRange(int24 tickLower, int24 tickUpper) internal view {
         int24 _tickSpacing = tickSpacing;
-        require(tickLower < tickUpper, "tickLower < tickUpper");
-        require(tickLower >= TickMath.MIN_TICK, "tickLower too low");
-        require(tickUpper <= TickMath.MAX_TICK, "tickUpper too high");
-        require(tickLower % _tickSpacing == 0, "tickLower % tickSpacing");
-        require(tickUpper % _tickSpacing == 0, "tickUpper % tickSpacing");
+        require(tickLower < tickUpper);
+        require(tickLower >= TickMath.MIN_TICK, "too low");
+        require(tickUpper <= TickMath.MAX_TICK, "too high");
+        require(tickLower % _tickSpacing == 0, "LowSpacing");
+        require(tickUpper % _tickSpacing == 0, "UpSpacing");
     }
 
     /// @dev Withdraws liquidity from a range and collects all fees in the
