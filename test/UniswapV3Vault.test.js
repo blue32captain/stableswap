@@ -4,8 +4,6 @@ const UniswapV3Vault = artifacts.require("UniswapV3Vault");
 const MockToken = artifacts.require("MockToken");
 const UniswapV3Factory = artifacts.require("UniswapV3Factory");
 
-
-
 contract("UniswapV3Vault", (accounts) => {
     var uniswapv3factory_instance;
     var token0, token1;
