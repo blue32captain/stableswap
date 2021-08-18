@@ -103,11 +103,10 @@ contract UniswapV3VaultManager is IVaultManager {
      */
     function rebalance() external override {
         require(shouldRebalance(), "cannot rebalance");
-
         (, int24 tick, , , , , ) = pool.slot0();
         int24 tickFloor = _floor(tick);
         int24 tickCeil = tickFloor + tickSpacing;
-
+        
         vault.rebalance(
             0,
             0,
@@ -140,13 +139,14 @@ contract UniswapV3VaultManager is IVaultManager {
         if (tickMove < minTickMove) {
             return false;
         }
-
+        
         // check price near twap
-        int24 twap = getTwap();
+        int24 twap = getTwap();        
         int24 twapDeviation = tick > twap ? tick - twap : twap - tick;
         if (twapDeviation > maxTwapDeviation) {
             return false;
         }
+
 
         // check price not too close to boundary
         int24 maxThreshold = baseThreshold > limitThreshold ? baseThreshold : limitThreshold;
@@ -165,8 +165,7 @@ contract UniswapV3VaultManager is IVaultManager {
         uint32 _twapDuration = twapDuration;
         uint32[] memory secondsAgo = new uint32[](2);
         secondsAgo[0] = _twapDuration;
-        secondsAgo[1] = 0;
-
+        secondsAgo[1] = 0;        
         (int56[] memory tickCumulatives, ) = pool.observe(secondsAgo);
         return int24((tickCumulatives[1] - tickCumulatives[0]) / _twapDuration);
     }

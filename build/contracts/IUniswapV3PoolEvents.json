@@ -3265,7 +3265,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.2",
-  "updatedAt": "2021-08-16T08:21:55.864Z",
+  "updatedAt": "2021-08-17T17:03:24.984Z",
   "devdoc": {
     "events": {
       "Burn(address,int24,int24,uint128,uint256,uint256)": {

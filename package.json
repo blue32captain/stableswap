@@ -21,7 +21,8 @@
     "ethers": "^5.4.4",
     "truffle": "^5.3.7",
     "truffle-contract-size": "^2.0.1",
-    "truffle-flattener": "^1.5.0"
+    "truffle-flattener": "^1.5.0",
+    "truffle-test-helpers": "^0.2.2"
   },
   "devDependencies": {
     "truffle-plugin-verify": "^0.5.11"

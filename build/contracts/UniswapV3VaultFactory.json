@@ -5713,7 +5713,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.2",
-  "updatedAt": "2021-08-17T13:52:39.827Z",
+  "updatedAt": "2021-08-18T13:11:40.410Z",
   "devdoc": {
     "events": {
       "UniswapV3VaultsInitiated(address,address,uint24,address,uint256)": {

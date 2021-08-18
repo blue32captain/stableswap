@@ -1527,7 +1527,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.2",
-  "updatedAt": "2021-08-16T08:21:55.856Z",
+  "updatedAt": "2021-08-17T17:03:24.950Z",
   "devdoc": {
     "details": "The pool interface is broken up into many smaller pieces",
     "kind": "dev",

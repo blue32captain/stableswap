@@ -1,9 +1,18 @@
 const { BN } = require("web3-utils");
+const { advanceBlock,
+    advanceToBlock,
+    increaseTime,
+    increaseTimeTo,
+    duration,
+    revert,
+    latestTime
+} = require("truffle-test-helpers");
 
 const UniswapV3Vault = artifacts.require("UniswapV3Vault");
 const UniswapV3VaultManager = artifacts.require("UniswapV3VaultManager");
-const MockToken = artifacts.require("MockToken");
 const UniswapV3Factory = artifacts.require("UniswapV3Factory");
+const MockToken = artifacts.require("MockToken");
+const Router = artifacts.require("Router");
 
 contract("UniswapV3VaultManager", (accounts) => {
     var uniswapv3factory_instance;
@@ -11,10 +20,13 @@ contract("UniswapV3VaultManager", (accounts) => {
     var mockPoolAddress;
     var v3vault_instance;
     var v3vaultmanager_instance;
+    var router_instance;
     const governance = accounts[0];
     const keeper = accounts[2];
 
     before(async () => {
+
+        await advanceBlock();
 
         await MockToken.new(
             { from: accounts[1] }
@@ -77,6 +89,17 @@ contract("UniswapV3VaultManager", (accounts) => {
             { from: governance }
         );
 
+        await Router.new(
+            { from: accounts[0] }
+        ).then((instance) => {
+            router_instance = instance;
+        });
+
+    });
+
+    beforeEach(function() {
+        this.startTime = latestTime();
+        this.endTime = this.startTime + duration.hours(1);
     });
 
     describe("Config Standard Vault Manager Test", () => {
@@ -124,5 +147,205 @@ contract("UniswapV3VaultManager", (accounts) => {
             assert.equal(twapDuration, new BN('600').toString(), "TwapDuration is not correct!");
         });
 
-    })
+    });
+
+    describe("Deposit & Withdraw works successfully!", () => {
+
+        it("Deposit works successfully", async () => {
+
+            const amount0Desired = 100000;
+            const amount1Desired = 100000;
+            const recipient = accounts[2];
+
+            await token0.approve(
+                v3vault_instance.address,
+                amount0Desired,
+                { from: accounts[1] }
+            );
+
+            await token1.approve(
+                v3vault_instance.address,
+                amount1Desired,
+                { from: accounts[1] }
+            );
+
+            const {shares, amount0, amount1} = await v3vault_instance.deposit.call(
+                amount0Desired,
+                amount1Desired,
+                0,
+                0,
+                recipient,
+                { from: accounts[1]}
+            );
+
+            await v3vault_instance.deposit(
+                amount0Desired,
+                amount1Desired,
+                0,
+                0,
+                recipient,
+                { from: accounts[1]}
+            );
+
+            const balance = await v3vault_instance.balanceOf(recipient);
+            assert.equal(shares.toString(), balance.toString(), "Shares of recipient is incorrect.");
+            /// Check amounts don't exceed desired
+            assert(amount0 <= amount0Desired, "Distribution token0 amount works unsuccessfully!");
+            assert(amount1 <= amount1Desired, "Distribution token1 amount works unsuccessfully!");
+        });
+
+        it("Withdraw works successfully", async () => {
+
+            let totalShares = 0;
+
+            const amount0Desired = 100000;
+            const amount1Desired = 100000;
+            const recipient = accounts[2];
+
+            await token0.approve(
+                v3vault_instance.address,
+                (amount0Desired + amount0Desired),
+                { from: accounts[1] }
+            );
+
+            await token1.approve(
+                v3vault_instance.address,
+                amount1Desired + amount1Desired,
+                { from: accounts[1] }
+            );
+
+            let depositValue = await v3vault_instance.deposit.call(
+                amount0Desired,
+                amount1Desired,
+                0,
+                0,
+                recipient,
+                { from: accounts[1]}
+            );
+
+            await v3vault_instance.deposit(
+                amount0Desired,
+                amount1Desired,
+                0,
+                0,
+                recipient,
+                { from: accounts[1]}
+            );
+
+            totalShares += parseInt(depositValue.shares);
+
+            depositValue = await v3vault_instance.deposit.call(
+                amount0Desired,
+                amount1Desired,
+                0,
+                0,
+                recipient,
+                { from: accounts[1]}
+            );
+
+            await v3vault_instance.deposit(
+                amount0Desired,
+                amount1Desired,
+                0,
+                0,
+                recipient,
+                { from: accounts[1]}
+            );
+
+            totalShares += parseInt(depositValue.shares);
+
+            await v3vault_instance.withdraw(
+                totalShares,
+                0,
+                0,
+                accounts[2],
+                { from: recipient }
+            );
+
+            const balance1 = await token0.balanceOf(
+                accounts[2],
+                { from: accounts[1] }
+            );
+
+            const balance2 = await token0.balanceOf(
+                accounts[2],
+                { from: accounts[1] }
+            );
+
+            const approved = await token0.allowance(
+                accounts[1],
+                v3vault_instance.address,
+                { from: accounts[2] }
+            );
+
+            assert.equal(approved, new BN('0').toString());
+            assert.equal(balance1, new BN("200000").toString());
+            assert.equal(balance2, new BN("200000").toString());
+        })
+    });
+
+    describe("Rebalance works successfully!", () => {
+
+        it("1 hour forward & Rebalance function works successfully!", async () => {
+            const amount0Desired = 100000;
+            const amount1Desired = 100000;
+            const recipient = accounts[2];
+
+            await token0.approve(
+                v3vault_instance.address,
+                (amount0Desired + amount0Desired),
+                { from: accounts[1] }
+            );
+
+            await token1.approve(
+                v3vault_instance.address,
+                amount1Desired + amount1Desired,
+                { from: accounts[1] }
+            );
+
+            await v3vault_instance.deposit(
+                amount0Desired,
+                amount1Desired,
+                0,
+                0,
+                recipient,
+                { from: accounts[1]}
+            );
+
+            const { total0, total1 } = await v3vault_instance.getTotalAmounts.call(
+                { from: accounts[0] }
+            );
+
+            const totalSupply = await v3vault_instance.totalSupply(
+                { from: accounts[0] }
+            );
+
+            await router_instance.swap(
+                mockPoolAddress,
+                true,
+                1000,
+                { from: accounts[2] }
+            );
+
+            // fast forward 1 hour
+            await advanceToBlock(this.endTime); 
+
+            await v3vaultmanager_instance.rebalance(
+                { from: keeper }
+            );
+
+            console.log(total0, total1);
+            console.log(totalSupply);
+        });
+
+    });
+
+    describe("Invariant test", () => {
+    });
+
+    describe("Governance Methods works successfully!", () => {
+    });
+
+    describe("Total Amounts Test", () => {
+    });
 })
