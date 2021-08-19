@@ -14,7 +14,6 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^3.4.1-solc-0.7-2",
-    "@openzeppelin/test-helpers": "^0.5.10",
     "@truffle/hdwallet-provider": "^1.0.43",
     "@uniswap/v3-core": "1.00",
     "@uniswap/v3-periphery": "1.1.1",
@@ -25,6 +24,7 @@
     "truffle-test-helpers": "^0.2.2"
   },
   "devDependencies": {
+    "@openzeppelin/test-helpers": "^0.5.13",
     "truffle-plugin-verify": "^0.5.11"
   }
 }

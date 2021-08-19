@@ -133,6 +133,7 @@ contract UniswapV3VaultManager is IVaultManager {
             return false;
         }
 
+
         // check price has moved enough
         (, int24 tick, , , , , ) = pool.slot0();
         int24 tickMove = tick > lastTick ? tick - lastTick : lastTick - tick;
@@ -146,7 +147,6 @@ contract UniswapV3VaultManager is IVaultManager {
         if (twapDeviation > maxTwapDeviation) {
             return false;
         }
-
 
         // check price not too close to boundary
         int24 maxThreshold = baseThreshold > limitThreshold ? baseThreshold : limitThreshold;
