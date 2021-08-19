@@ -75,7 +75,12 @@ contract("UniswapV3VaultManager", (accounts) => {
             { from: governance }
         );
 
+        const { tick } = await mockPoolInstance.slot0(
+            { from: governance }
+        );
+
         console.log(new BN(tickSpacing).toString());
+        console.log(new BN(tick).toString());
 
         let latest = await time.latest();
         await time.increaseTo(latest.add(time.duration.minutes(10)));
@@ -113,7 +118,7 @@ contract("UniswapV3VaultManager", (accounts) => {
             { from: accounts[0] }
         ).then((instance) => {
             router_instance = instance;
-        }); 
+        });
 
     });
 
@@ -318,6 +323,12 @@ contract("UniswapV3VaultManager", (accounts) => {
                 { from: accounts[1] }
             );
 
+            await token1.approve(
+                router_instance.address,
+                amount1Desired + amount1Desired,
+                { from: accounts[1] }
+            );
+
             await v3vault_instance.deposit(
                 amount0Desired,
                 amount1Desired,
@@ -327,39 +338,29 @@ contract("UniswapV3VaultManager", (accounts) => {
                 { from: accounts[1]}
             );
 
-            let latest = await time.latest();
-            await time.increaseTo(latest.add(time.duration.minutes(10)));
-
             const { total0, total1 } = await v3vault_instance.getTotalAmounts.call(
                 { from: accounts[0] }
             );
 
             const totalSupply = await v3vault_instance.totalSupply(
                 { from: accounts[0] }
+            );          
+
+            await v3vaultmanager_instance.rebalance(
+                { from: keeper }
             );
 
             await router_instance.swap(
                 mockPoolAddress,
                 true,
-                300000,
-                { from: accounts[2] }
+                10000,
+                { from: accounts[1] }
+            ); 
+
+            totalAmounts =  await v3vault_instance.getTotalAmounts.call(
+                { from: accounts[0] }
             );
 
-            const {tick} = await mockPoolInstance.slot0(
-                {from: governance}
-            );
-            
-            let thrownError;
-
-            try {
-                await v3vaultmanager_instance.rebalance(
-                    { from: keeper }
-                );
-            } catch(error) {
-                thrownError = error;
-            }
-
-            assert.include(thrownError.message, "cannot rebalance");
             assert.equal(total0, new BN('200000').toString());
             assert.equal(total1, new BN('200000').toString());
             assert.equal(totalSupply, new BN('200000').toString());
