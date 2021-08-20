@@ -365,6 +365,5 @@ contract("UniswapV3VaultManager", (accounts) => {
             assert.equal(total1, new BN('200000').toString());
             assert.equal(totalSupply, new BN('200000').toString());
         });
-
     });
 })

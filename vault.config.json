@@ -1,0 +1,11 @@
+{
+    "PoolAddress": "0x99ac8ca7087fa4a2a1fb6357269965a2014abc35",
+    "ProtocolFee": 5000,
+    "MaxTotalSupply": 10000000000,
+    "BaseThreshold": 3600,
+    "LimitThreshold": 1200,
+    "Period": 41400,
+    "MinTickMove": 0,
+    "MaxTwapDeviation": 100,
+    "TwapDuration": 60
+}

@@ -1,2 +1,5 @@
 node_modules
 package-lock.json
+secret.development.json
+secret.json
+secret.testnet.json
