@@ -4,7 +4,7 @@ const vaultConfig = require("../vault.config.json");
 const secret = require("../secret.json");
 const secretTestnet = require("../secret.testnet.json");
 
-module.exports = function(deployer, network) {
+module.exports = function (deployer, network) {
     if (network == "mainnet") {
 
         deployer.deployer(
@@ -15,7 +15,7 @@ module.exports = function(deployer, network) {
         );
 
         vaultInstance = await UniswapV3Vault.deployed();
-        
+
         deployer.deployer(
             UniswapV3VaultManager,
             vaultInstance.address,
@@ -29,7 +29,7 @@ module.exports = function(deployer, network) {
         );
 
     } else {
-        
+
         deployer.deployer(
             UniswapV3Vault,
             vaultConfig.PoolAddress,
@@ -38,7 +38,7 @@ module.exports = function(deployer, network) {
         );
 
         vaultInstance = await UniswapV3Vault.deployed();
-        
+
         deployer.deployer(
             UniswapV3VaultManager,
             vaultInstance.address,

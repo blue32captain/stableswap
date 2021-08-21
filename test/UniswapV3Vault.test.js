@@ -16,11 +16,11 @@ contract("UniswapV3Vault", (accounts) => {
             { from: accounts[1] }
         ).then((instance) => {
             token0 = instance;
-        }); 
+        });
 
         await MockToken.new(
             { from: accounts[1] }
-        ).then ((instance) => {
+        ).then((instance) => {
             token1 = instance;
         })
 
@@ -28,8 +28,8 @@ contract("UniswapV3Vault", (accounts) => {
             { from: accounts[0] }
         ).then((instance) => {
             uniswapv3factory_instance = instance;
-        }); 
-        
+        });
+
         await uniswapv3factory_instance.createPool(
             token0.address,
             token1.address,
@@ -94,15 +94,15 @@ contract("UniswapV3Vault", (accounts) => {
                 { from: accounts[1] }
             );
 
-            const {shares, amount0, amount1} = await v3vault_instance.deposit.call(
+            const { shares, amount0, amount1 } = await v3vault_instance.deposit.call(
                 amount0Desired,
                 amount1Desired,
                 0,
                 0,
                 recipient,
-                { from: accounts[1]}
+                { from: accounts[1] }
             );
-            
+
 
             await v3vault_instance.deposit(
                 amount0Desired,
@@ -110,7 +110,7 @@ contract("UniswapV3Vault", (accounts) => {
                 0,
                 0,
                 recipient,
-                { from: accounts[1]}
+                { from: accounts[1] }
             );
 
             const balance = await v3vault_instance.balanceOf(recipient);
@@ -134,11 +134,11 @@ contract("UniswapV3Vault", (accounts) => {
                     0,
                     0,
                     recipient,
-                    { from: accounts[1]}
+                    { from: accounts[1] }
                 );
             } catch (error) {
-                thrownError = error;                
-            }            
+                thrownError = error;
+            }
 
             assert.include(thrownError.message, "ERC20: transfer amount exceeds allowance");
 
@@ -171,7 +171,7 @@ contract("UniswapV3Vault", (accounts) => {
                 0,
                 0,
                 recipient,
-                { from: accounts[1]}
+                { from: accounts[1] }
             );
 
             await v3vault_instance.withdraw(
@@ -196,5 +196,5 @@ contract("UniswapV3Vault", (accounts) => {
             assert.equal(balance2, new BN("100000").toString());
         })
     })
-    
+
 });

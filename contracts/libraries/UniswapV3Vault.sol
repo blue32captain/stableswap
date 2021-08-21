@@ -54,7 +54,12 @@ contract UniswapV3Vault is
         uint256 feesToProtocol1
     );
 
-    event Snapshot(int24 tick, uint256 totalAmount0, uint256 totalAmount1, uint256 totalSupply);
+    event Snapshot(
+        int24 tick,
+        uint256 totalAmount0,
+        uint256 totalAmount1,
+        uint256 totalSupply
+    );
 
     IUniswapV3Pool public immutable pool;
     IERC20 public immutable token0;
@@ -136,14 +141,19 @@ contract UniswapV3Vault is
         _poke(limitLower, limitUpper);
 
         // Calculate amounts proportional to vault's holdings
-        (shares, amount0, amount1) = _calcSharesAndAmounts(amount0Desired, amount1Desired);
+        (shares, amount0, amount1) = _calcSharesAndAmounts(
+            amount0Desired,
+            amount1Desired
+        );
         require(shares > 0);
         require(amount0 >= amount0Min);
         require(amount1 >= amount1Min);
 
         // Pull in tokens from sender
-        if (amount0 > 0) token0.safeTransferFrom(msg.sender, address(this), amount0);
-        if (amount1 > 0) token1.safeTransferFrom(msg.sender, address(this), amount1);
+        if (amount0 > 0)
+            token0.safeTransferFrom(msg.sender, address(this), amount0);
+        if (amount1 > 0)
+            token1.safeTransferFrom(msg.sender, address(this), amount1);
 
         // Mint shares to recipient
         _mint(to, shares);
@@ -164,7 +174,10 @@ contract UniswapV3Vault is
     /// @dev Calculates the largest possible `amount0` and `amount1` such that
     /// they're in the same proportion as total amounts, but not greater than
     /// `amount0Desired` and `amount1Desired` respectively.
-    function _calcSharesAndAmounts(uint256 amount0Desired, uint256 amount1Desired)
+    function _calcSharesAndAmounts(
+        uint256 amount0Desired,
+        uint256 amount1Desired
+    )
         internal
         view
         returns (
@@ -191,7 +204,10 @@ contract UniswapV3Vault is
             amount0 = amount0Desired;
             shares = amount0.mul(totalSupply).div(total0);
         } else {
-            uint256 cross = Math.min(amount0Desired.mul(total1), amount1Desired.mul(total0));
+            uint256 cross = Math.min(
+                amount0Desired.mul(total1),
+                amount1Desired.mul(total0)
+            );
             require(cross > 0);
 
             // Round up amounts
@@ -215,11 +231,12 @@ contract UniswapV3Vault is
         uint256 amount0Min,
         uint256 amount1Min,
         address to
-    ) 
-        external 
-        nonReentrant 
+    )
+        external
         override
-        returns (uint256 amount0, uint256 amount1) {
+        nonReentrant
+        returns (uint256 amount0, uint256 amount1)
+    {
         require(shares > 0);
         require(to != address(0) && to != address(this), "to");
         uint256 totalSupply = totalSupply();
@@ -232,10 +249,18 @@ contract UniswapV3Vault is
         uint256 unusedAmount1 = getBalance1().mul(shares).div(totalSupply);
 
         // Withdraw proportion of liquidity from Uniswap pool
-        (uint256 baseAmount0, uint256 baseAmount1) =
-            _burnLiquidityShare(baseLower, baseUpper, shares, totalSupply);
-        (uint256 limitAmount0, uint256 limitAmount1) =
-            _burnLiquidityShare(limitLower, limitUpper, shares, totalSupply);
+        (uint256 baseAmount0, uint256 baseAmount1) = _burnLiquidityShare(
+            baseLower,
+            baseUpper,
+            shares,
+            totalSupply
+        );
+        (uint256 limitAmount0, uint256 limitAmount1) = _burnLiquidityShare(
+            limitLower,
+            limitUpper,
+            shares,
+            totalSupply
+        );
 
         // Sum up total amounts owed to recipient
         amount0 = unusedAmount0.add(baseAmount0).add(limitAmount0);
@@ -258,11 +283,17 @@ contract UniswapV3Vault is
         uint256 totalSupply
     ) internal returns (uint256 amount0, uint256 amount1) {
         (uint128 totalLiquidity, , , , ) = _position(tickLower, tickUpper);
-        uint256 liquidity = uint256(totalLiquidity).mul(shares).div(totalSupply);
+        uint256 liquidity = uint256(totalLiquidity).mul(shares).div(
+            totalSupply
+        );
 
         if (liquidity > 0) {
-            (uint256 burned0, uint256 burned1, uint256 fees0, uint256 fees1) =
-                _burnAndCollect(tickLower, tickUpper, _toUint128(liquidity));
+            (
+                uint256 burned0,
+                uint256 burned1,
+                uint256 fees0,
+                uint256 fees1
+            ) = _burnAndCollect(tickLower, tickUpper, _toUint128(liquidity));
 
             // Add share of fees
             amount0 = burned0.add(fees0.mul(shares).div(totalSupply));
@@ -286,10 +317,7 @@ contract UniswapV3Vault is
         int24 _bidUpper,
         int24 _askLower,
         int24 _askUpper
-    ) 
-        external 
-        override
-        nonReentrant {
+    ) external override nonReentrant {
         require(msg.sender == manager, "manager");
         _checkRange(_baseLower, _baseUpper);
         _checkRange(_bidLower, _bidUpper);
@@ -302,7 +330,10 @@ contract UniswapV3Vault is
         // Withdraw all current liquidity from Uniswap pool
         {
             (uint128 baseLiquidity, , , , ) = _position(baseLower, baseUpper);
-            (uint128 limitLiquidity, , , , ) = _position(limitLower, limitUpper);
+            (uint128 limitLiquidity, , , , ) = _position(
+                limitLower,
+                limitUpper
+            );
             _burnAndCollect(baseLower, baseUpper, baseLiquidity);
             _burnAndCollect(limitLower, limitUpper, limitLiquidity);
         }
@@ -325,7 +356,12 @@ contract UniswapV3Vault is
         }
 
         // Place base order on Uniswap
-        uint128 liquidity = _liquidityForAmounts(_baseLower, _baseUpper, balance0, balance1);
+        uint128 liquidity = _liquidityForAmounts(
+            _baseLower,
+            _baseUpper,
+            balance0,
+            balance1
+        );
         _mintLiquidity(_baseLower, _baseUpper, liquidity);
         (baseLower, baseUpper) = (_baseLower, _baseUpper);
 
@@ -333,8 +369,18 @@ contract UniswapV3Vault is
         balance1 = getBalance1();
 
         // Place bid or ask order on Uniswap depending on which token is left
-        uint128 bidLiquidity = _liquidityForAmounts(_bidLower, _bidUpper, balance0, balance1);
-        uint128 askLiquidity = _liquidityForAmounts(_askLower, _askUpper, balance0, balance1);
+        uint128 bidLiquidity = _liquidityForAmounts(
+            _bidLower,
+            _bidUpper,
+            balance0,
+            balance1
+        );
+        uint128 askLiquidity = _liquidityForAmounts(
+            _askLower,
+            _askUpper,
+            balance0,
+            balance1
+        );
         if (bidLiquidity > askLiquidity) {
             _mintLiquidity(_bidLower, _bidUpper, bidLiquidity);
             (limitLower, limitUpper) = (_bidLower, _bidUpper);
@@ -373,14 +419,13 @@ contract UniswapV3Vault is
         }
 
         // Collect all owed tokens including earned fees
-        (uint256 collect0, uint256 collect1) =
-            pool.collect(
-                address(this),
-                tickLower,
-                tickUpper,
-                type(uint128).max,
-                type(uint128).max
-            );
+        (uint256 collect0, uint256 collect1) = pool.collect(
+            address(this),
+            tickLower,
+            tickUpper,
+            type(uint128).max,
+            type(uint128).max
+        );
 
         feesToVault0 = collect0.sub(burned0);
         feesToVault1 = collect1.sub(burned1);
@@ -397,7 +442,12 @@ contract UniswapV3Vault is
             accruedProtocolFees0 = accruedProtocolFees0.add(feesToProtocol0);
             accruedProtocolFees1 = accruedProtocolFees1.add(feesToProtocol1);
         }
-        emit CollectFees(feesToVault0, feesToVault1, feesToProtocol0, feesToProtocol1);
+        emit CollectFees(
+            feesToVault0,
+            feesToVault1,
+            feesToProtocol0,
+            feesToProtocol1
+        );
     }
 
     /// @dev Deposits liquidity in a range on the Uniswap pool.
@@ -416,10 +466,20 @@ contract UniswapV3Vault is
      * other words, how much of each token the vault would hold if it withdrew
      * all its liquidity from Uniswap.
      */
-    function getTotalAmounts() public view override returns (uint256 total0, uint256 total1) {
-        (uint256 baseAmount0, uint256 baseAmount1) = getPositionAmounts(baseLower, baseUpper);
-        (uint256 limitAmount0, uint256 limitAmount1) =
-            getPositionAmounts(limitLower, limitUpper);
+    function getTotalAmounts()
+        public
+        view
+        override
+        returns (uint256 total0, uint256 total1)
+    {
+        (uint256 baseAmount0, uint256 baseAmount1) = getPositionAmounts(
+            baseLower,
+            baseUpper
+        );
+        (uint256 limitAmount0, uint256 limitAmount1) = getPositionAmounts(
+            limitLower,
+            limitUpper
+        );
         total0 = getBalance0().add(baseAmount0).add(limitAmount0);
         total1 = getBalance1().add(baseAmount1).add(limitAmount1);
     }
@@ -434,9 +494,18 @@ contract UniswapV3Vault is
         view
         returns (uint256 amount0, uint256 amount1)
     {
-        (uint128 liquidity, , , uint128 tokensOwed0, uint128 tokensOwed1) =
-            _position(tickLower, tickUpper);
-        (amount0, amount1) = _amountsForLiquidity(tickLower, tickUpper, liquidity);
+        (
+            uint128 liquidity,
+            ,
+            ,
+            uint128 tokensOwed0,
+            uint128 tokensOwed1
+        ) = _position(tickLower, tickUpper);
+        (amount0, amount1) = _amountsForLiquidity(
+            tickLower,
+            tickUpper,
+            liquidity
+        );
 
         // Subtract protocol fees
         uint256 oneMinusFee = uint256(1e6).sub(protocolFee);
@@ -470,7 +539,11 @@ contract UniswapV3Vault is
             uint128
         )
     {
-        bytes32 positionKey = PositionKey.compute(address(this), tickLower, tickUpper);
+        bytes32 positionKey = PositionKey.compute(
+            address(this),
+            tickLower,
+            tickUpper
+        );
         return pool.positions(positionKey);
     }
 
@@ -532,8 +605,10 @@ contract UniswapV3Vault is
         bytes calldata data
     ) external override {
         require(msg.sender == address(pool));
-        if (amount0Delta > 0) token0.safeTransfer(msg.sender, uint256(amount0Delta));
-        if (amount1Delta > 0) token1.safeTransfer(msg.sender, uint256(amount1Delta));
+        if (amount0Delta > 0)
+            token0.safeTransfer(msg.sender, uint256(amount0Delta));
+        if (amount1Delta > 0)
+            token1.safeTransfer(msg.sender, uint256(amount1Delta));
     }
 
     /**
@@ -586,7 +661,10 @@ contract UniswapV3Vault is
      * supply rather than amounts of token0 and token1 as those amounts
      * fluctuate naturally over time.
      */
-    function setMaxTotalSupply(uint256 _maxTotalSupply) external onlyGovernance {
+    function setMaxTotalSupply(uint256 _maxTotalSupply)
+        external
+        onlyGovernance
+    {
         maxTotalSupply = _maxTotalSupply;
     }
 
@@ -599,7 +677,13 @@ contract UniswapV3Vault is
         uint128 liquidity
     ) external onlyGovernance {
         pool.burn(tickLower, tickUpper, liquidity);
-        pool.collect(address(this), tickLower, tickUpper, type(uint128).max, type(uint128).max);
+        pool.collect(
+            address(this),
+            tickLower,
+            tickUpper,
+            type(uint128).max,
+            type(uint128).max
+        );
     }
 
     /**
@@ -619,7 +703,7 @@ contract UniswapV3Vault is
         governance = msg.sender;
     }
 
-    modifier onlyGovernance {
+    modifier onlyGovernance() {
         require(msg.sender == governance, "governance");
         _;
     }

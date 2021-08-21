@@ -12,7 +12,8 @@ import "./UniswapV3Vault.sol";
 
 contract UniswapV3VaultFactory is Ownable {
     IUniswapV3Factory public uniswapV3Factory;
-    mapping(address => mapping(address => mapping(uint24 => address))) public getUniswapV3Vaults;
+    mapping(address => mapping(address => mapping(uint24 => address)))
+        public getUniswapV3Vaults;
 
     address[] private allUniswapV3Vaults;
 
@@ -21,7 +22,13 @@ contract UniswapV3VaultFactory is Ownable {
     /// @param secondToken the token address 2
     /// @param fee transaction fee
     /// @param uniswapV3Vault the UniswapV3Vault address
-    event UniswapV3VaultsInitiated(address firstToken, address secondToken, uint24 fee, address uniswapV3Vault, uint256);
+    event UniswapV3VaultsInitiated(
+        address firstToken,
+        address secondToken,
+        uint24 fee,
+        address uniswapV3Vault,
+        uint256
+    );
 
     constructor(address _uniswapV3Factory) {
         uniswapV3Factory = IUniswapV3Factory(_uniswapV3Factory);
@@ -32,17 +39,25 @@ contract UniswapV3VaultFactory is Ownable {
     /// @param tokenB The second token address.
     /// @param fee Transaction fee.
     /// @return uniswapV3Vault The initiated interest token contract
-    function initiateUniswapV3Vault(address tokenA, address tokenB, uint24 fee, uint) external onlyOwner returns (address uniswapV3Vault) {
-        require(tokenA != tokenB, 'Address is identical!');
+    function initiateUniswapV3Vault(
+        address tokenA,
+        address tokenB,
+        uint24 fee,
+        uint256
+    ) external onlyOwner returns (address uniswapV3Vault) {
+        require(tokenA != tokenB, "Address is identical!");
         address firstToken = tokenA < tokenB ? tokenA : tokenB;
         address secondToken = tokenA < tokenB ? tokenB : tokenA;
 
         int24 tickSpacing = uniswapV3Factory.feeAmountTickSpacing(fee);
-        require(tickSpacing != 0, 'Fee can not be zero!');
+        require(tickSpacing != 0, "Fee can not be zero!");
 
-        require(firstToken != address(0), 'Address can not be zero!');
+        require(firstToken != address(0), "Address can not be zero!");
 
-        require(getUniswapV3Vaults[firstToken][secondToken][fee] == address(0), 'UniswapV3Vault already existing!');
+        require(
+            getUniswapV3Vaults[firstToken][secondToken][fee] == address(0),
+            "UniswapV3Vault already existing!"
+        );
 
         address pool = uniswapV3Factory.getPool(firstToken, secondToken, fee);
         /// If pool is empty, then create a new pool
@@ -60,7 +75,13 @@ contract UniswapV3VaultFactory is Ownable {
         allUniswapV3Vaults.push(uniswapV3Vault);
 
         /// Trigger event for notifying new vault is initiated
-        emit UniswapV3VaultsInitiated(firstToken, secondToken, fee, uniswapV3Vault, allUniswapV3Vaults.length);
+        emit UniswapV3VaultsInitiated(
+            firstToken,
+            secondToken,
+            fee,
+            uniswapV3Vault,
+            allUniswapV3Vaults.length
+        );
 
         return uniswapV3Vault;
     }

@@ -2,7 +2,7 @@ const { BN } = require("web3-utils");
 const { time } = require('@openzeppelin/test-helpers')
 require('@openzeppelin/test-helpers/configure')({
     provider: 'http://localhost:9545',
-  });
+});
 
 const UniswapV3Vault = artifacts.require("UniswapV3Vault");
 const UniswapV3VaultManager = artifacts.require("UniswapV3VaultManager");
@@ -21,18 +21,18 @@ contract("UniswapV3VaultManager", (accounts) => {
     var router_instance;
     const governance = accounts[0];
     const keeper = accounts[2];
-  
+
     before(async () => {
 
         await MockToken.new(
             { from: accounts[1] }
         ).then((instance) => {
             token0 = instance;
-        }); 
+        });
 
         await MockToken.new(
             { from: accounts[1] }
-        ).then ((instance) => {
+        ).then((instance) => {
             token1 = instance;
         })
 
@@ -40,8 +40,8 @@ contract("UniswapV3VaultManager", (accounts) => {
             { from: accounts[0] }
         ).then((instance) => {
             uniswapv3factory_instance = instance;
-        }); 
-        
+        });
+
         await uniswapv3factory_instance.createPool(
             token0.address,
             token1.address,
@@ -58,7 +58,7 @@ contract("UniswapV3VaultManager", (accounts) => {
 
         mockPoolInstance = await UniswapV3Pool.at(
             mockPoolAddress
-        );        
+        );
 
         const price = parseInt(Math.sqrt(100) * 75555555546);
         await mockPoolInstance.initialize(
@@ -130,7 +130,7 @@ contract("UniswapV3VaultManager", (accounts) => {
                 { from: accounts[0] }
             );
             assert.equal(poolAddress, mockPoolAddress, "Manager Pool is not matched at Mock Pool");
-            
+
         });
 
         it("Manager Properties Test", async () => {
@@ -159,7 +159,7 @@ contract("UniswapV3VaultManager", (accounts) => {
                 { from: accounts[0] }
             );
 
-            assert.equal(baseThreshold, new BN('2400').toString(),"BaseThreshold property is not correct!");
+            assert.equal(baseThreshold, new BN('2400').toString(), "BaseThreshold property is not correct!");
             assert.equal(limitThreshold, new BN('1200').toString(), "LimitThreshold propery is not correct!");
             assert.equal(period, new BN('0').toString(), "Period property is not correct!");
             assert.equal(minTickMove, new BN('0').toString(), "MinTickMove property is not matched as defined!");
@@ -189,13 +189,13 @@ contract("UniswapV3VaultManager", (accounts) => {
                 { from: accounts[1] }
             );
 
-            const {shares, amount0, amount1} = await v3vault_instance.deposit.call(
+            const { shares, amount0, amount1 } = await v3vault_instance.deposit.call(
                 amount0Desired,
                 amount1Desired,
                 0,
                 0,
                 recipient,
-                { from: accounts[1]}
+                { from: accounts[1] }
             );
 
             await v3vault_instance.deposit(
@@ -204,7 +204,7 @@ contract("UniswapV3VaultManager", (accounts) => {
                 0,
                 0,
                 recipient,
-                { from: accounts[1]}
+                { from: accounts[1] }
             );
 
             const balance = await v3vault_instance.balanceOf(recipient);
@@ -240,7 +240,7 @@ contract("UniswapV3VaultManager", (accounts) => {
                 0,
                 0,
                 recipient,
-                { from: accounts[1]}
+                { from: accounts[1] }
             );
 
             await v3vault_instance.deposit(
@@ -249,7 +249,7 @@ contract("UniswapV3VaultManager", (accounts) => {
                 0,
                 0,
                 recipient,
-                { from: accounts[1]}
+                { from: accounts[1] }
             );
 
             totalShares += parseInt(depositValue.shares);
@@ -260,7 +260,7 @@ contract("UniswapV3VaultManager", (accounts) => {
                 0,
                 0,
                 recipient,
-                { from: accounts[1]}
+                { from: accounts[1] }
             );
 
             await v3vault_instance.deposit(
@@ -269,7 +269,7 @@ contract("UniswapV3VaultManager", (accounts) => {
                 0,
                 0,
                 recipient,
-                { from: accounts[1]}
+                { from: accounts[1] }
             );
 
             totalShares += parseInt(depositValue.shares);
@@ -335,7 +335,7 @@ contract("UniswapV3VaultManager", (accounts) => {
                 0,
                 0,
                 recipient,
-                { from: accounts[1]}
+                { from: accounts[1] }
             );
 
             const { total0, total1 } = await v3vault_instance.getTotalAmounts.call(
@@ -344,7 +344,7 @@ contract("UniswapV3VaultManager", (accounts) => {
 
             const totalSupply = await v3vault_instance.totalSupply(
                 { from: accounts[0] }
-            );          
+            );
 
             await v3vaultmanager_instance.rebalance(
                 { from: keeper }
@@ -355,9 +355,9 @@ contract("UniswapV3VaultManager", (accounts) => {
                 true,
                 10000,
                 { from: accounts[1] }
-            ); 
+            );
 
-            totalAmounts =  await v3vault_instance.getTotalAmounts.call(
+            totalAmounts = await v3vault_instance.getTotalAmounts.call(
                 { from: accounts[0] }
             );
 

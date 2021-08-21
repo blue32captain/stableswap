@@ -106,7 +106,7 @@ contract UniswapV3VaultManager is IVaultManager {
         (, int24 tick, , , , , ) = pool.slot0();
         int24 tickFloor = _floor(tick);
         int24 tickCeil = tickFloor + tickSpacing;
-        
+
         vault.rebalance(
             0,
             0,
@@ -133,23 +133,24 @@ contract UniswapV3VaultManager is IVaultManager {
             return false;
         }
 
-
         // check price has moved enough
         (, int24 tick, , , , , ) = pool.slot0();
         int24 tickMove = tick > lastTick ? tick - lastTick : lastTick - tick;
         if (tickMove < minTickMove) {
             return false;
         }
-        
+
         // check price near twap
-        int24 twap = getTwap();        
+        int24 twap = getTwap();
         int24 twapDeviation = tick > twap ? tick - twap : twap - tick;
         if (twapDeviation > maxTwapDeviation) {
             return false;
         }
 
         // check price not too close to boundary
-        int24 maxThreshold = baseThreshold > limitThreshold ? baseThreshold : limitThreshold;
+        int24 maxThreshold = baseThreshold > limitThreshold
+            ? baseThreshold
+            : limitThreshold;
         if (
             tick < TickMath.MIN_TICK + maxThreshold + tickSpacing ||
             tick > TickMath.MAX_TICK - maxThreshold - tickSpacing
@@ -165,7 +166,7 @@ contract UniswapV3VaultManager is IVaultManager {
         uint32 _twapDuration = twapDuration;
         uint32[] memory secondsAgo = new uint32[](2);
         secondsAgo[0] = _twapDuration;
-        secondsAgo[1] = 0;        
+        secondsAgo[1] = 0;
         (int56[] memory tickCumulatives, ) = pool.observe(secondsAgo);
         return int24((tickCumulatives[1] - tickCumulatives[0]) / _twapDuration);
     }
@@ -178,10 +179,16 @@ contract UniswapV3VaultManager is IVaultManager {
         return compressed * tickSpacing;
     }
 
-    function _checkThreshold(int24 threshold, int24 _tickSpacing) internal pure {
+    function _checkThreshold(int24 threshold, int24 _tickSpacing)
+        internal
+        pure
+    {
         require(threshold > 0, "threshold must be > 0");
         require(threshold <= TickMath.MAX_TICK, "threshold too high");
-        require(threshold % _tickSpacing == 0, "threshold must be multiple of tickSpacing");
+        require(
+            threshold % _tickSpacing == 0,
+            "threshold must be multiple of tickSpacing"
+        );
     }
 
     function setKeeper(address _keeper) external onlyGovernance {
@@ -207,7 +214,10 @@ contract UniswapV3VaultManager is IVaultManager {
         minTickMove = _minTickMove;
     }
 
-    function setMaxTwapDeviation(int24 _maxTwapDeviation) external onlyGovernance {
+    function setMaxTwapDeviation(int24 _maxTwapDeviation)
+        external
+        onlyGovernance
+    {
         require(_maxTwapDeviation >= 0, "maxTwapDeviation must be >= 0");
         maxTwapDeviation = _maxTwapDeviation;
     }
@@ -218,7 +228,7 @@ contract UniswapV3VaultManager is IVaultManager {
     }
 
     /// @dev Uses same governance as underlying vault.
-    modifier onlyGovernance {
+    modifier onlyGovernance() {
         require(msg.sender == vault.governance(), "governance");
         _;
     }
