@@ -4,19 +4,18 @@ const vaultConfig = require("../vault.config.json");
 const secret = require("../secret.json");
 const secretTestnet = require("../secret.testnet.json");
 
-module.exports = function (deployer, network) {
+module.exports = async function (deployer, network) {
     if (network == "mainnet") {
-
-        deployer.deployer(
+        await deployer.deploy(
             UniswapV3Vault,
             vaultConfig.PoolAddress,
             vaultConfig.ProtocolFee,
             vaultConfig.MaxTotalSupply
         );
+        const vaultInstance = await UniswapV3Vault.deployed();
+        console.log('vault address: ', vaultInstance.address);
 
-        vaultInstance = await UniswapV3Vault.deployed();
-
-        deployer.deployer(
+        await deployer.deploy(
             UniswapV3VaultManager,
             vaultInstance.address,
             vaultConfig.BaseThreshold,
@@ -29,17 +28,16 @@ module.exports = function (deployer, network) {
         );
 
     } else {
-
-        deployer.deployer(
+        await deployer.deploy(
             UniswapV3Vault,
             vaultConfig.PoolAddress,
             vaultConfig.ProtocolFee,
             vaultConfig.MaxTotalSupply
         );
+        const vaultInstance = await UniswapV3Vault.deployed();
+        console.log('vault address: ', vaultInstance.address);
 
-        vaultInstance = await UniswapV3Vault.deployed();
-
-        deployer.deployer(
+        await deployer.deploy(
             UniswapV3VaultManager,
             vaultInstance.address,
             vaultConfig.BaseThreshold,
