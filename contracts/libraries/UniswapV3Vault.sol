@@ -88,8 +88,7 @@ contract UniswapV3Vault is
     constructor(
         address _pool,
         uint256 _protocolFee,
-        uint256 _maxTotalSupply,
-        address _governance
+        uint256 _maxTotalSupply
     ) ERC20("UniswapV3 Vault", "UV") {
         pool = IUniswapV3Pool(_pool);
         token0 = IERC20(IUniswapV3Pool(_pool).token0());
@@ -97,7 +96,7 @@ contract UniswapV3Vault is
         tickSpacing = IUniswapV3Pool(_pool).tickSpacing();
         protocolFee = _protocolFee;
         maxTotalSupply = _maxTotalSupply;
-        governance = _governance;
+        governance = msg.sender;
 
         require(_protocolFee < 1e6, "fee");
     }
